@@ -34,12 +34,14 @@ job "rabbit" {
       env {
         RABBITMQ_ERLANG_COOKIE = "rabbitmq"
         CONSUL_HOST = "${attr.unique.network.ip-address}"
+        CONSUL_SVC_PORT = "${NOMAD_HOST_PORT_amqp}"
+        CONSUL_SVC_TAGS = "amqp"
       }
 
       resources {
         network {
-          port "amqp" { static = 5672 }
-          port "ui" { static = 15672 }
+          port "amqp" {}
+          port "ui" {}
           port "discovery" { static = 4369 }
           port "clustering" { static = 25672 }
         }
@@ -48,12 +50,7 @@ job "rabbit" {
       service {
         name = "rabbitmq"
         port = "ui"
-        check {
-          name     = "alive"
-          type     = "tcp"
-          interval = "10s"
-          timeout  = "2s"
-        }
+        tags = ["management", "http"]
       }
 
     }
