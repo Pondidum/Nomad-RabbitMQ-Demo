@@ -24,6 +24,23 @@ sleep 5
 
 (
 cat <<-EOF
+	client {
+		enabled = true
+	}
+
+	consul {
+		address = "127.0.0.1:8500"
+	}
+
+	vault {
+		enabled = true
+		address = "http://nomad1.mshome.net:8200"
+	}
+EOF
+) | sudo tee /etc/nomad.d/nomad.hcl
+
+(
+cat <<-EOF
 	[Unit]
 	Description=nomad server and client
 	Requires=network-online.target
@@ -31,7 +48,7 @@ cat <<-EOF
 
 	[Service]
 	Restart=on-failure
-	ExecStart=/usr/bin/nomad agent -client -join nomad.service.consul:4646 -data-dir=/tmp/nomad-client
+	ExecStart=/usr/bin/nomad agent -join nomad.service.consul:4646 -config /etc/nomad.d
 	ExecReload=/bin/kill -HUP $MAINPID
 	User=root
 	Group=root

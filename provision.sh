@@ -7,6 +7,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip curl vim apt-transp
 # Download Nomad
 NOMAD_VERSION=0.8.1
 CONSUL_VERSION=1.4.0
+VAULT_VERSION=1.1.0
 
 cd /tmp/
 
@@ -15,6 +16,9 @@ curl -sSL https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VE
 
 echo "Fetching Consul..."
 curl -sSL https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip -o consul.zip
+
+echo "Fetching Vault..."
+curl -sSL https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o vault.zip
 
 echo "Installing Nomad..."
 unzip nomad.zip
@@ -42,6 +46,11 @@ sudo usermod -aG docker vagrant
 echo "Installing Consul..."
 unzip /tmp/consul.zip
 sudo install consul /usr/bin/consul
+
+echo "Installing Vault..."
+sudo unzip /tmp/vault.zip -d /usr/bin
+sudo chmod 0755 /usr/bin/vault
+sudo chown root:root /usr/bin/vault
 
 for bin in cfssl cfssl-certinfo cfssljson
 do
