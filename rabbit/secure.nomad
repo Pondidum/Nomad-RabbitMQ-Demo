@@ -48,10 +48,6 @@ job "rabbit" {
         RABBITMQ_SSL_CERTFILE = "/etc/ssl/certs/rabbit.pem"
         RABBITMQ_SSL_KEYFILE = "/etc/ssl/certs/rabbit.pem"
 
-        RABBITMQ_ERLANG_COOKIE = "rabbitmq"
-        RABBITMQ_DEFAULT_USER = "administrator"
-        RABBITMQ_DEFAULT_PASS = "some secure password here"
-
         CONSUL_HOST = "${attr.unique.network.ip-address}"
         CONSUL_SVC_PORT = "${NOMAD_HOST_PORT_amqp}"
         CONSUL_SVC_TAGS = "amqp"
@@ -65,6 +61,20 @@ job "rabbit" {
       EOH
         destination   = "secrets/rabbit.pem"
         change_mode   = "restart"
+      }
+
+      template {
+        data = <<EOH
+        {{ with secret "secret/data/rabbit/cookie" }}
+        RABBITMQ_ERLANG_COOKIE="{{ .Data.data.cookie }}"
+        {{ end }}
+        {{ with secret "secret/data/rabbit/admin" }}
+        RABBITMQ_DEFAULT_USER={{ .Data.data.username }}
+        RABBITMQ_DEFAULT_PASS={{ .Data.data.password }}
+        {{ end }}
+        EOH
+        destination = "secrets/rabbit.env"
+        env = true
       }
 
       resources {
