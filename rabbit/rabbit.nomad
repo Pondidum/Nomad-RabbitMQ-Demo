@@ -33,6 +33,9 @@ job "rabbit" {
 
       env {
         RABBITMQ_ERLANG_COOKIE = "rabbitmq"
+        RABBITMQ_DEFAULT_USER = "administrator"
+        RABBITMQ_DEFAULT_PASS = "some secure password here"
+
         CONSUL_HOST = "${attr.unique.network.ip-address}"
         CONSUL_SVC_PORT = "${NOMAD_HOST_PORT_amqp}"
         CONSUL_SVC_TAGS = "amqp"
